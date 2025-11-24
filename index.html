@@ -136,7 +136,34 @@
     width: auto;
     display: block;
 }
+        .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.church-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--primary);
+    line-height: 1.2;
+}
+
+.church-subtitle {
+    font-size: 0.9rem;
+    margin: 0;
+    color: var(--secondary);
+    font-weight: 500;
+    line-height: 1.2;
+}
+        
 /* Tablet */
 @media (max-width: 992px) {
     .logo-img {
@@ -622,11 +649,11 @@
     <header>
         <div class="container header-container">
             <div class="logo">
+                <div class="logo-container">
                <img src="images/antioch-logo.png" alt="Antioch Baptist Church Logo" class="logo-img"> 
-                <!--<div class="logo-icon">A</div>
-                <div class="logo-text"> -->
-                    <h1>Antioch Baptist</h1>
-                    <p>Churches of Kenya</p>
+                    <div class="logo-text">
+               <h1 class="church-name">Antioch Independent Baptist Churches of Kenya</h1>
+                    </div>
                 </div>
             </div>
             <button class="nav-toggle" id="navToggle">
@@ -667,7 +694,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>Our Mission</h2>
-                <p>Discover our purpose and commitment to serving God and community</p>
+                <p>Discover your purpose and commitment to serving God and community</p>
             </div>
             <div class="mission-content">
                 <div class="mission-text">
