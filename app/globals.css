@@ -1,0 +1,804 @@
+@import "tailwindcss";
+
+@config "../tailwind.config.ts";
+
+@layer base {
+  :root {
+    /* Brand Colors (Hex mapped to vars, used as-is in config or via HSL if needed) */
+    /* Since we used var(--primary) in config without hsl wrapper, we can put hex here directly ? 
+       Wait, typical shadcn uses hsl values. 
+       I will use HEX for simplicity and ensuring exact match with user request, 
+       and update tailwind config to NOT use hsl() wrapper for the brand colors. 
+       See tailwind.config.ts changes. */
+
+    --primary: #15a4e2;
+    --primary-foreground: #feffff;
+
+    --secondary: #41619b;
+    --secondary-foreground: #feffff;
+
+    --accent: #ac8d54;
+    --accent-foreground: #feffff;
+
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    /* Legacy variables for compatibility with initial migration if needed */
+    --white: #feffff;
+    --dark: #333333;
+    --light-gray: #f5f5f5;
+    --medium-gray: #e0e0e0;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: #15a4e2;
+    --primary-foreground: #000;
+
+    --secondary: #41619b;
+    --secondary-foreground: #fff;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: #ac8d54;
+    --accent-foreground: #fff;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* Enhanced typography scale */
+  h1 {
+    @apply font-heading text-4xl md:text-5xl font-bold leading-tight tracking-tight;
+  }
+
+  h2 {
+    @apply font-heading text-3xl md:text-4xl font-semibold leading-tight tracking-tight;
+  }
+
+  h3 {
+    @apply font-heading text-xl md:text-2xl font-semibold leading-snug;
+  }
+
+  /* Improved focus states for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Smooth scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
+/* Custom utility layer for consistent design system */
+@layer utilities {
+
+  /* Subtle depth system */
+  .shadow-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-medium {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-large {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-soft {
+    transition: all 0.2s ease-out;
+  }
+
+  /* Subtle entrance animations */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+  }
+
+  /* Pulse animation for live indicators */
+  @keyframes pulse-soft {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Backdrop blur utility */
+  .backdrop-blur-soft {
+    backdrop-filter: blur(8px);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* Custom Legacy Utils - Mapped to Tailwind or kept? 
+   We keep specific legacy classes used in HTML if not replaced by Tailwind, 
+   but ideally we rely on Tailwind now. 
+*/
+
+/* Retaining specific layout styles where tailwind utility might be verbose or custom */
+.container {
+  /* Tailwind .container is different, but we configured it in theme center:true padding:2rem. 
+       The legacy CSS had max-width 1200px. 
+       Tailwind container with max-w usually follows breakpoints. 
+       We can override or let tailwind handle it. 
+       Let's keep legacy override for safety if needed, or trust tailwind config.
+    */
+  @apply mx-auto px-5 max-w-[1200px] w-full;
+}
+
+/* Header specific overrides if needed */
+.header-container {
+  @apply flex justify-between items-center py-[15px] px-5;
+}
+
+/* ======================
+   COMPONENT-SPECIFIC STYLES 
+   ====================== */
+
+/* Logo Styles */
+.logo-img {
+  height: 80px;
+  width: auto;
+  max-width: 80px;
+  max-height: 80px;
+  display: block;
+  object-fit: contain;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.church-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--primary);
+  line-height: 1.2;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+}
+
+.church-subtitle {
+  font-size: 0.9rem;
+  margin: 0;
+  color: var(--secondary);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Navigation Styles */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  z-index: 1001;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav-toggle:hover {
+  background-color: hsl(var(--muted));
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 4px;
+}
+
+nav ul li {
+  list-style: none;
+}
+
+.nav-link {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: var(--dark);
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: inline-block;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+.nav-link-active {
+  color: var(--primary);
+  background-color: hsl(var(--primary) / 0.1);
+  font-weight: 600;
+}
+
+.nav-donate-item {
+  margin-left: 8px;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, rgba(21, 164, 226, 0.9), rgba(65, 97, 155, 0.88)),
+    url('https://source.unsplash.com/random/1600x900/?church,kenya') no-repeat center center/cover;
+  color: var(--white);
+  text-align: center;
+  padding: 200px 24px 120px;
+  margin-top: 80px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+.hero h1 {
+  color: var(--white);
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hero p {
+  max-width: 700px;
+  margin: 0 auto;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Sections */
+section {
+  padding: 80px 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-title h2 {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 15px;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  color: var(--secondary);
+}
+
+.section-title h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--primary);
+}
+
+.section-title p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: #666;
+}
+
+/* Mission Section */
+.mission {
+  background: linear-gradient(to bottom, #fafafa 0%, #f5f5f5 100%);
+  position: relative;
+}
+
+.mission::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(172, 141, 84, 0.03), transparent 70%);
+  pointer-events: none;
+}
+
+.mission-content {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.mission-text {
+  flex: 1;
+}
+
+.mission-text h3 {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  color: var(--secondary);
+}
+
+.mission-image {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(172, 141, 84, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mission-image:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+
+.mission-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Events Section */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+.event-card {
+  background: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+}
+
+.event-image-wrapper {
+  position: relative;
+}
+
+/* Services Section */
+.services {
+  background-color: var(--light-gray);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.service-card {
+  text-align: center;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-top: 4px solid var(--primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-top-color: var(--accent);
+}
+
+.service-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-icon-wrapper {
+  transform: scale(1.1);
+}
+
+/* Sermon Section */
+.sermon-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sermon-video-wrapper {
+  position: relative;
+}
+
+.sermon-video {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.sermon-video:hover {
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+}
+
+.sermon-video iframe {
+  display: block;
+}
+
+.sermon-content h3 {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  color: var(--secondary);
+}
+
+/* Live Streams Section */
+.live-streams {
+  background-color: var(--light-gray);
+}
+
+.streams-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.live-stream-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.live-stream-card:hover {
+  transform: translateY(-6px);
+}
+
+.live-placeholder {
+  transition: all 0.3s ease;
+}
+
+/* Footer */
+footer {
+  background-color: var(--secondary);
+  color: var(--white);
+  position: relative;
+}
+
+.footer-enhanced {
+  position: relative;
+}
+
+.footer-divider {
+  height: 4px;
+  background: linear-gradient(90deg,
+      var(--primary) 0%,
+      var(--accent) 50%,
+      var(--primary) 100%);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-column h3 {
+  color: var(--white);
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+}
+
+.footer-column p {
+  line-height: 1.7;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.85);
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  color: var(--white);
+  transform: translateX(4px);
+}
+
+.social-links {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: var(--white);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-icon:hover {
+  background-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(21, 164, 226, 0.4);
+  border-color: var(--primary);
+}
+
+.copyright {
+  text-align: center;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+}
+
+/* Typography Enhancements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--secondary);
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* Link Styles - Exclude links inside buttons and button-like links */
+a:not(button a, button > a, .inline-flex) {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:not(button a, button > a, .inline-flex):hover {
+  color: var(--secondary);
+}
+
+/* ======================
+   RESPONSIVE STYLES
+   ====================== */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .logo-img {
+    height: 50px;
+  }
+
+  .mission-content,
+  .sermon-container {
+    flex-direction: column;
+  }
+
+  .mission-image,
+  .sermon-video {
+    margin-top: 30px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .logo-img {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  nav ul {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 24px 20px;
+    z-index: 999;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  nav ul.show {
+    display: flex;
+  }
+
+  nav ul li {
+    width: 100%;
+  }
+
+  .nav-link {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .nav-donate-item {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  .nav-donate-item button {
+    width: 100%;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-buttons .btn,
+  .hero-buttons button {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .logo-text p,
+  .church-subtitle {
+    display: none;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .logo-img {
+    height: 35px;
+  }
+
+  .church-name {
+    font-size: 1rem;
+  }
+
+  .hero {
+    padding: 140px 20px 80px;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  section {
+    padding: 60px 0;
+  }
+}
