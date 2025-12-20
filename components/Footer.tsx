@@ -38,6 +38,7 @@ export default function Footer() {
                             <li><Link href="/leadership" className="hover:text-white transition-colors">Leadership</Link></li>
                             <li><Link href="/events" className="hover:text-white transition-colors">Events</Link></li>
                             <li><a href="/sermons" className="footer-link">Sermons</a></li>
+                            <li><Link href="/prayer" className="hover:text-white transition-colors">Prayer Request</Link></li>
                         </ul>
                     </div>
                     <div className="footer-column">
