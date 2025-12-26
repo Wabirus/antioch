@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =============================
+// User & Staff/Admin Auth Models
+// =============================
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+
+  roles     UserRole[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        RoleName
+  permissions RolePermission[]
+  users       UserRole[]
+}
+
+enum RoleName {
+  ADMIN
+  STAFF
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  key         PermissionKey
+  description String
+  roles       RolePermission[]
+}
+
+enum PermissionKey {
+  CREATE_EVENT
+  UPDATE_EVENT
+  DELETE_EVENT
+
+  CREATE_SERMON
+  UPDATE_SERMON
+  DELETE_SERMON
+
+  CREATE_MINISTRY
+  UPDATE_MINISTRY
+  DELETE_MINISTRY
+
+  MANAGE_USERS
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+// =============================
+// Staff Model
+// =============================
+
+model Staff {
+  id           String   @id @default(uuid())
+  name         String
+  position     String
+  bio          String   @db.Text
+  image        String
+  email        String?
+  category     String
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// =============================
+// Ministry Model
+// =============================
+
+model Ministry {
+  id              String   @id @default(uuid())
+  name            String
+  description     String   @db.Text
+  leader          String
+  meetingSchedule String
+  image           String
+  category        String
+  featured        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// =============================
+// Event Model
+// =============================
+
+model Event {
+  id          String    @id @default(uuid())
+  title       String
+  description String    @db.Text
+  image       String
+  startTime   DateTime
+  endTime     DateTime?
+  location    String
+  category    String
+  actionLabel String?
+  actionUrl   String?
+  featured    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// =============================
+// Sermon Model
+// =============================
+
+model Sermon {
+  id               String   @id @default(uuid())
+  title            String
+  speaker          String
+  date             DateTime
+  videoUrl         String
+  thumbnail        String
+  series           String?
+  description      String   @db.Text
+  shortDescription String
+  featured         Boolean  @default(false)
+  topic            String
+  scripture        String
+  duration         Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
