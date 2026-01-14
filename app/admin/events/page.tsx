@@ -64,10 +64,7 @@ export default async function EventsPage() {
                                         <Pencil className="h-4 w-4" />
                                     </Button>
                                 </Link>
-                                <form action={async () => {
-                                    "use server"
-                                    await deleteEvent(event.id)
-                                }}>
+                                <form action={deleteEvent.bind(null, event.id)}>
                                     <Button variant="destructive" size="sm" type="submit">
                                         <Trash2 className="h-4 w-4" />
                                     </Button>

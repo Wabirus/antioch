@@ -55,10 +55,7 @@ export default async function StaffPage() {
                                             <Pencil className="h-4 w-4" />
                                         </Button>
                                     </Link>
-                                    <form action={async () => {
-                                        "use server"
-                                        await deleteStaff(staff.id)
-                                    }}>
+                                    <form action={deleteStaff.bind(null, staff.id)}>
                                         <Button variant="destructive" size="sm" type="submit">
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
