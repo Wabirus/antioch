@@ -8,13 +8,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prisma": "prisma"
+    "prisma": "prisma",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^5.22.0",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.90.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
@@ -29,10 +35,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.0",
-    "prisma": "^7.2.0",
+    "prisma": "^5.22.0",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

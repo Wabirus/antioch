@@ -71,10 +71,14 @@ export function AdminSidebar() {
                     <Settings className="h-5 w-5" />
                     Settings
                 </button>
-                <button className="flex items-center gap-3 px-4 py-3 w-full rounded-lg transition-colors hover:bg-destructive/10 text-destructive font-medium text-sm">
-                    <LogOut className="h-5 w-5" />
-                    Sign Out
-                </button>
+                <form action={async () => {
+                    await import("@/app/login/actions").then(m => m.signout())
+                }}>
+                    <button type="submit" className="flex items-center gap-3 px-4 py-3 w-full rounded-lg transition-colors hover:bg-destructive/10 text-destructive font-medium text-sm">
+                        <LogOut className="h-5 w-5" />
+                        Sign Out
+                    </button>
+                </form>
             </div>
         </div>
     );

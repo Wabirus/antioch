@@ -1,18 +1,36 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Sermon, getAllSermons, getUniqueSeries, getUniqueTopics, getUniqueSpeakers } from "@/lib/data/sermons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, PlayCircle, Calendar, User, BookOpen, Clock, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-export default function SermonList() {
-    const allSermons = getAllSermons();
-    const seriesList = getUniqueSeries();
-    const topicsList = getUniqueTopics();
-    const speakersList = getUniqueSpeakers();
+// Define interface compatible with DB data but formatted for UI
+export interface UISermon {
+    id: string;
+    title: string;
+    speaker: string;
+    date: string; // Formatted date string
+    videoUrl: string;
+    thumbnail: string; // nullable in DB but we handle fallback
+    series: string | null;
+    description: string;
+    shortDescription: string;
+    featured: boolean;
+    topic: string[]; // UI expects array, DB provides single string -> we wrap it
+    scripture: string;
+    duration: string; // Formatted duration
+}
+
+interface SermonListProps {
+    sermons: UISermon[];
+    seriesList: string[];
+    topicsList: string[];
+    speakersList: string[];
+}
+
+export default function SermonList({ sermons: allSermons, seriesList, topicsList, speakersList }: SermonListProps) {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedSeries, setSelectedSeries] = useState("all");

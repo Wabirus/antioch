@@ -1,6 +1,6 @@
 import { PageHero } from "@/components/ui/PageHero";
-import { getAllMinistries, Ministry } from "@/lib/data/ministries";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { getMinistries } from "@/app/actions/ministries";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, User } from "lucide-react";
 
@@ -9,8 +9,9 @@ export const metadata = {
     description: "Find your place to belong and serve at Antioch. Explore our various ministries for all ages.",
 };
 
-export default function MinistriesPage() {
-    const ministries = getAllMinistries();
+export default async function MinistriesPage() {
+    const result = await getMinistries();
+    const ministries = result.success && result.data ? result.data : [];
 
     return (
         <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
@@ -24,47 +25,53 @@ export default function MinistriesPage() {
             {/* Main Content */}
             <section className="py-20">
                 <div className="container">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {ministries.map((ministry) => (
-                            <Card key={ministry.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                                <div className="relative h-48 overflow-hidden">
-                                    <img
-                                        src={ministry.image}
-                                        alt={ministry.name}
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                    />
-                                    <div className="absolute top-2 right-2">
-                                        <span className="bg-primary/90 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                                            {ministry.category}
-                                        </span>
-                                    </div>
-                                </div>
-                                <CardHeader>
-                                    <CardTitle className="text-xl font-bold">{ministry.name}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-muted-foreground mb-4 h-20 overflow-hidden text-ellipsis">
-                                        {ministry.description}
-                                    </p>
-                                    <div className="space-y-2 text-sm text-gray-600">
-                                        <div className="flex items-center gap-2">
-                                            <User className="w-4 h-4 text-primary" />
-                                            <span className="font-medium">Led by:</span> {ministry.leader}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="w-4 h-4 text-primary" />
-                                            <span className="font-medium">Meets:</span> {ministry.meetingTime}
+                    {ministries.length === 0 ? (
+                        <div className="text-center py-20 bg-white rounded-xl border">
+                            <h3 className="text-lg font-medium text-muted-foreground">No ministries found. Please check back later.</h3>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {ministries.map((ministry) => (
+                                <Card key={ministry.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                                    <div className="relative h-48 overflow-hidden">
+                                        <img
+                                            src={ministry.image || "/placeholder.jpg"}
+                                            alt={ministry.name}
+                                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                        />
+                                        <div className="absolute top-2 right-2">
+                                            <span className="bg-primary/90 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                                                {ministry.category}
+                                            </span>
                                         </div>
                                     </div>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button className="w-full" variant="secondary">
-                                        Get Involved
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        ))}
-                    </div>
+                                    <CardHeader>
+                                        <CardTitle className="text-xl font-bold">{ministry.name}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-muted-foreground mb-4 h-20 overflow-hidden text-ellipsis">
+                                            {ministry.description}
+                                        </p>
+                                        <div className="space-y-2 text-sm text-gray-600">
+                                            <div className="flex items-center gap-2">
+                                                <User className="w-4 h-4 text-primary" />
+                                                <span className="font-medium">Led by:</span> {ministry.leader}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="w-4 h-4 text-primary" />
+                                                <span className="font-medium">Meets:</span> {ministry.meetingSchedule}
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button className="w-full" variant="secondary">
+                                            Get Involved
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
