@@ -35,7 +35,7 @@ export default function Header() {
     const sidebarItems = {
         involved: [
             { label: 'Visit Antioch', sub: 'Find a location near you', icon: MapPin, href: '/new-here' },
-            { label: 'Live Streams', sub: 'Join us from anywhere', icon: Video, href: '/#live' },
+            { label: 'Live Streams', sub: 'Join us from anywhere', icon: Video, href: '/live' },
             { label: 'Ministries', sub: 'Relationships to grow your faith', icon: Users, href: '/ministries' },
             { label: 'Giving', sub: 'Generosity in action', icon: Heart, href: '/give' },
             { label: 'Volunteer', sub: 'Serve at your local campus', icon: HandHeart, href: '/ministries' }, // Using ministries as proxy for volunteer

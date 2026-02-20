@@ -49,7 +49,7 @@ export default function LiveStreams() {
                                 Access our services from any device through YouTube Live. Enjoy high-quality streaming and engage with fellow viewers.
                             </p>
                             <Button className="w-full shadow-soft hover:shadow-medium transition-smooth" asChild>
-                                <a href="#" onClick={(e) => e.preventDefault()}>Watch on YouTube</a>
+                                <a href="/live">Watch on YouTube</a>
                             </Button>
                         </CardContent>
                     </Card>
