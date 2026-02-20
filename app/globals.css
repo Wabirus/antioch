@@ -218,6 +218,34 @@ html {
   @apply flex justify-between items-center py-[15px] px-5;
 }
 
+/* Shared responsive video wrapper */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+
+.video-container iframe,
+.video-container video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+@supports not (aspect-ratio: 16 / 9) {
+  .video-container {
+    height: 0;
+    padding-top: 56.25%;
+  }
+}
+
 /* ======================
    COMPONENT-SPECIFIC STYLES 
    ====================== */
