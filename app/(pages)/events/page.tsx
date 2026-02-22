@@ -9,12 +9,12 @@ export const metadata = {
     description: "Stay up to date with what's happening at Antioch. Join us for upcoming services, conferences, and community events.",
 };
 
-export default function EventsPage() {
-    const events = getAllEvents();
+export default async function EventsPage() {
+    const events = await getAllEvents();
 
     // Group events by month
     const eventsByMonth = events.reduce((acc, event) => {
-        const month = event.month || "Upcoming";
+        const month = event.startTime ? new Date(event.startTime).toLocaleString('default', { month: 'long' }) : "Upcoming";
         if (!acc[month]) {
             acc[month] = [];
         }
@@ -49,20 +49,20 @@ export default function EventsPage() {
                                     <div key={event.id} className="group bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col md:flex-row">
                                         {/* Date Block (Desktop) */}
                                         <div className="hidden md:flex flex-col items-center justify-center w-32 bg-slate-50 border-r border-slate-100 p-6 text-center">
-                                            <span className="text-sm font-bold text-muted-foreground uppercase">{event.month?.substring(0, 3)}</span>
-                                            <span className="text-3xl font-bold text-secondary my-1">{event.date.split(',')[0].split(' ').pop()}</span>
+                                            <span className="text-sm font-bold text-muted-foreground uppercase">{new Date(event.startTime).toLocaleString('default', { month: 'short' })}</span>
+                                            <span className="text-3xl font-bold text-secondary my-1">{new Date(event.startTime).getDate()}</span>
                                         </div>
 
                                         {/* Image (Mobile) / Thumbnail (Desktop) */}
                                         <div className="md:w-64 h-48 md:h-auto relative">
                                             <img
-                                                src={event.img}
+                                                src={event.image || '/placeholder.jpg'}
                                                 alt={event.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
                                             <div className="absolute top-2 right-2 md:hidden">
                                                 <span className="bg-white/90 text-primary text-xs font-bold px-2 py-1 rounded shadow-sm">
-                                                    {event.date}
+                                                    {new Date(event.startTime).toLocaleDateString()}
                                                 </span>
                                             </div>
                                         </div>
@@ -79,14 +79,14 @@ export default function EventsPage() {
                                             </div>
 
                                             <p className="text-muted-foreground mb-4 line-clamp-2">
-                                                {event.desc}
+                                                {event.description}
                                             </p>
 
                                             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-auto">
-                                                {event.time && (
+                                                {event.startTime && (
                                                     <div className="flex items-center gap-1.5">
                                                         <Clock className="w-4 h-4" />
-                                                        <span>{event.time}</span>
+                                                        <span>{new Date(event.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                     </div>
                                                 )}
                                                 {event.location && (
@@ -101,7 +101,7 @@ export default function EventsPage() {
                                         {/* Action Button */}
                                         <div className="p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-100">
                                             <Button variant="ghost" className="group-hover:translate-x-1 transition-transform">
-                                                {event.action} <ArrowRight className="ml-2 w-4 h-4" />
+                                                {event.actionLabel || 'Details'} <ArrowRight className="ml-2 w-4 h-4" />
                                             </Button>
                                         </div>
                                     </div>

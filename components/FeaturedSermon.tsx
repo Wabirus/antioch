@@ -1,11 +1,10 @@
-'use client';
-
 import { Button } from "@/components/ui/button";
 import { PlayCircle } from "lucide-react";
 import { getFeaturedSermon } from "@/lib/data/sermons";
+import Link from "next/link";
 
-export default function FeaturedSermon() {
-    const featuredSermon = getFeaturedSermon();
+export default async function FeaturedSermon() {
+    const featuredSermon = await getFeaturedSermon();
 
     if (!featuredSermon) return null;
 
@@ -38,7 +37,7 @@ export default function FeaturedSermon() {
                             {featuredSermon.description}
                         </p>
                         <Button size="lg" className="shadow-medium hover:shadow-large transition-smooth" asChild>
-                            <a href="/sermons">View All Sermons</a>
+                            <Link href="/sermons">View All Sermons</Link>
                         </Button>
                     </div>
                 </div>

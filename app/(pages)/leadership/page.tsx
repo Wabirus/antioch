@@ -8,8 +8,8 @@ export const metadata = {
     description: "Meet the dedicated team serving at Antioch. We are here to serve you and help you grow in your faith.",
 };
 
-export default function LeadershipPage() {
-    const staff = getAllStaff();
+export default async function LeadershipPage() {
+    const staff = await getAllStaff();
 
     return (
         <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
@@ -35,7 +35,7 @@ export default function LeadershipPage() {
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
                                     <div className="absolute bottom-0 left-0 p-6 text-white w-full">
-                                        <p className="text-sm font-semibold text-primary-foreground/80 uppercase tracking-widest mb-1">{member.role}</p>
+                                        <p className="text-sm font-semibold text-primary-foreground/80 uppercase tracking-widest mb-1">{member.position}</p>
                                         <h3 className="text-2xl font-bold">{member.name}</h3>
                                     </div>
                                 </div>

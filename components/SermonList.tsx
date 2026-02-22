@@ -1,18 +1,26 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Sermon, getAllSermons, getUniqueSeries, getUniqueTopics, getUniqueSpeakers } from "@/lib/data/sermons";
+import { Sermon } from "@/lib/data/sermons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, PlayCircle, Calendar, User, BookOpen, Clock, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function SermonList() {
-    const allSermons = getAllSermons();
-    const seriesList = getUniqueSeries();
-    const topicsList = getUniqueTopics();
-    const speakersList = getUniqueSpeakers();
+interface SermonListProps {
+    allSermons: Sermon[];
+    seriesList: string[];
+    topicsList: string[];
+    speakersList: string[];
+}
+
+export default function SermonList({
+    allSermons,
+    seriesList,
+    topicsList,
+    speakersList
+}: SermonListProps) {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedSeries, setSelectedSeries] = useState("all");
@@ -135,8 +143,7 @@ export default function SermonList() {
                                         {sermon.series || "Sermon"}
                                     </span>
                                     <div className="flex items-center text-muted-foreground text-xs gap-1">
-                                        <Calendar className="w-3 h-3" />
-                                        {sermon.date}
+                                        {new Date(sermon.date).toLocaleDateString()}
                                     </div>
                                 </div>
                                 <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">{sermon.title}</h3>
