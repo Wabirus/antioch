@@ -9,8 +9,8 @@ export const metadata = {
     description: "Find your place to belong and serve at Antioch. Explore our various ministries for all ages.",
 };
 
-export default function MinistriesPage() {
-    const ministries = getAllMinistries();
+export default async function MinistriesPage() {
+    const ministries = await getAllMinistries();
 
     return (
         <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
@@ -53,7 +53,7 @@ export default function MinistriesPage() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Calendar className="w-4 h-4 text-primary" />
-                                            <span className="font-medium">Meets:</span> {ministry.meetingTime}
+                                            <span className="font-medium">Meets:</span> {ministry.meetingSchedule}
                                         </div>
                                     </div>
                                 </CardContent>

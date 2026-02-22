@@ -38,7 +38,7 @@ export default function Header() {
             { label: 'Live Streams', sub: 'Join us from anywhere', icon: Video, href: '/live' },
             { label: 'Ministries', sub: 'Relationships to grow your faith', icon: Users, href: '/ministries' },
             { label: 'Giving', sub: 'Generosity in action', icon: Heart, href: '/give' },
-            { label: 'Volunteer', sub: 'Serve at your local campus', icon: HandHeart, href: '/ministries' }, // Using ministries as proxy for volunteer
+            { label: 'Volunteer', sub: 'Serve at your local campus', icon: HandHeart, href: '/ministries' },
             { label: 'Events', sub: 'Meaningful experiences', icon: Calendar, href: '/events' },
             { label: 'Need Prayer?', sub: 'Support through faith', icon: Sparkles, href: '/prayer' },
         ],
@@ -56,7 +56,6 @@ export default function Header() {
                     ? "bg-white py-2 shadow-sm border-gray-100"
                     : "bg-white py-3 border-gray-100"
             )}>
-                {/* Centered Container - max-w-7xl matches standard Tailwind container or custom variable */}
                 <div className="mx-auto max-w-7xl px-4 md:px-8 flex items-center justify-between h-12 md:h-14">
 
                     {/* LEFT: Hamburger + Logo */}
@@ -75,6 +74,7 @@ export default function Header() {
                                     src="/images/antioch-logo.png"
                                     alt="Antioch Logo"
                                     fill
+                                    sizes="40px"
                                     className="object-contain"
                                     priority
                                 />
@@ -85,7 +85,7 @@ export default function Header() {
                         </Link>
                     </div>
 
-                    {/* CENTER: Search Bar (Hidden on small mobile) */}
+                    {/* CENTER: Search Bar */}
                     <div className="hidden md:flex flex-1 max-w-md mx-8">
                         <div className="relative w-full group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-primary transition-colors" />
@@ -97,7 +97,7 @@ export default function Header() {
                         </div>
                     </div>
 
-                    {/* RIGHT: Navigation Links + User */}
+                    {/* RIGHT: Navigation Links + Login */}
                     <div className="flex items-center gap-6">
                         {/* Desktop Links */}
                         <nav className="hidden lg:flex items-center gap-6 font-semibold text-sm text-slate-700">
@@ -108,15 +108,19 @@ export default function Header() {
                             <Link href="/leadership" className="hover:text-black transition-colors">About</Link>
                         </nav>
 
-                        {/* Mobile Search Trigger (visible only on small screens) */}
+                        {/* Mobile Search Trigger */}
                         <button className="md:hidden text-slate-700">
                             <Search size={20} />
                         </button>
 
-                        {/* User Profile Icon */}
-                        <button className="text-slate-500 hover:text-slate-900 transition-colors bg-slate-100 p-2 rounded-full">
+                        {/* Staff Login Icon — links to admin login */}
+                        <Link
+                            href="/admin/login"
+                            className="text-slate-500 hover:text-slate-900 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full"
+                            title="Staff Login"
+                        >
                             <User size={20} className="fill-slate-300" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </header>
@@ -136,7 +140,7 @@ export default function Header() {
                 "fixed left-0 top-0 h-full w-[300px] sm:w-[350px] bg-white z-[160] shadow-2xl transition-transform duration-300 ease-out overflow-y-auto",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="p-6">
+                <div className="p-6 flex flex-col h-full">
                     {/* Header of Drawer */}
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-xl font-bold text-slate-900 tracking-tight">Get Involved</h2>
@@ -149,7 +153,7 @@ export default function Header() {
                     </div>
 
                     {/* Navigation Groups */}
-                    <div className="space-y-8">
+                    <div className="space-y-8 flex-1">
                         {/* Get Involved Section */}
                         <div className="space-y-4">
                             {sidebarItems.involved.map((item, idx) => (
@@ -187,6 +191,18 @@ export default function Header() {
                                 ))}
                             </div>
                         </div>
+                    </div>
+
+                    {/* Staff Portal — bottom of drawer */}
+                    <div className="mt-8 pt-5 border-t border-slate-100">
+                        <Link
+                            href="/admin/login"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors group"
+                        >
+                            <User className="w-4 h-4 group-hover:text-primary transition-colors" />
+                            <span className="text-sm font-medium">Staff Portal</span>
+                        </Link>
                     </div>
                 </div>
             </div>
