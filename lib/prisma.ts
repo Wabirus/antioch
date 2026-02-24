@@ -2,9 +2,9 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 const createPrismaClient = () => {
-    const connectionString = process.env.DATABASE_URL!
-    const adapter = new PrismaPg({ connectionString })
-    return new PrismaClient({ adapter } as ConstructorParameters<typeof PrismaClient>[0])
+    // const connectionString = process.env.DATABASE_URL!
+    // const adapter = new PrismaPg({ connectionString })
+    return new PrismaClient()
 }
 
 type PrismaClientType = ReturnType<typeof createPrismaClient>
