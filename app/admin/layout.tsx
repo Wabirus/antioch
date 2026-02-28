@@ -30,7 +30,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
     // Determine if the user has any roles yet (new signups might not)
     const isApproved = dbUser && dbUser.roles.length > 0
-    const isAdmin = dbUser?.roles.some(r => r.role.name === 'ADMIN')
+    type DbUserRole = NonNullable<typeof dbUser>['roles'][number]
+    const isAdmin = dbUser?.roles.some((r: DbUserRole) => r.role.name === 'ADMIN')
 
     if (!isApproved) {
         return (

@@ -43,7 +43,9 @@ export async function getUsers() {
         const dbUsers = await prisma.user.findMany({
             include: { roles: { include: { role: true } } }
         })
-        const roleMap = new Map(dbUsers.map(u => [u.email, u.roles.map(r => r.role.name)]))
+        type DbUser = (typeof dbUsers)[number]
+        type DbUserRole = DbUser['roles'][number]
+        const roleMap = new Map(dbUsers.map((u: DbUser) => [u.email, u.roles.map((r: DbUserRole) => r.role.name)]))
 
         return {
             users: users.map(u => ({
