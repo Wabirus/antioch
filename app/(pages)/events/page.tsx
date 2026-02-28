@@ -9,26 +9,11 @@ export const metadata = {
 };
 
 export default async function EventsPage() {
-    const result = await getEvents();
-    const dbEvents = result.success ? result.data : [];
+    const events = await getAllEvents();
 
-    // Map DB events to UI structure and Group by month
-    const eventsByMonth = (dbEvents || []).reduce((acc, event) => {
-        const date = new Date(event.startTime);
-        const month = date.toLocaleString('default', { month: 'long' }); // e.g., "March"
-
-        // Enhance event object for UI display
-        const uiEvent = {
-            ...event,
-            img: event.image,
-            desc: event.description,
-            action: event.actionLabel || "Details",
-            displayDate: date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
-            displayTime: event.startTime ? new Date(event.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : undefined,
-            displayDay: date.getDate(),
-            shortMonth: date.toLocaleString('default', { month: 'short' }),
-        };
-
+    // Group events by month
+    const eventsByMonth = events.reduce((acc, event) => {
+        const month = event.startTime ? new Date(event.startTime).toLocaleString('default', { month: 'long' }) : "Upcoming";
         if (!acc[month]) {
             acc[month] = [];
         }
@@ -63,13 +48,26 @@ export default async function EventsPage() {
                                     <span className="h-px flex-1 bg-border bg-slate-200"></span>
                                 </h2>
 
-                                <div className="space-y-6">
-                                    {eventsByMonth[month].map((event) => (
-                                        <div key={event.id} className="group bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col md:flex-row">
-                                            {/* Date Block (Desktop) */}
-                                            <div className="hidden md:flex flex-col items-center justify-center w-32 bg-slate-50 border-r border-slate-100 p-6 text-center">
-                                                <span className="text-sm font-bold text-muted-foreground uppercase">{event.shortMonth}</span>
-                                                <span className="text-3xl font-bold text-secondary my-1">{event.displayDay}</span>
+                            <div className="space-y-6">
+                                {eventsByMonth[month].map((event) => (
+                                    <div key={event.id} className="group bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col md:flex-row">
+                                        {/* Date Block (Desktop) */}
+                                        <div className="hidden md:flex flex-col items-center justify-center w-32 bg-slate-50 border-r border-slate-100 p-6 text-center">
+                                            <span className="text-sm font-bold text-muted-foreground uppercase">{new Date(event.startTime).toLocaleString('default', { month: 'short' })}</span>
+                                            <span className="text-3xl font-bold text-secondary my-1">{new Date(event.startTime).getDate()}</span>
+                                        </div>
+
+                                        {/* Image (Mobile) / Thumbnail (Desktop) */}
+                                        <div className="md:w-64 h-48 md:h-auto relative">
+                                            <img
+                                                src={event.image || '/placeholder.jpg'}
+                                                alt={event.title}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                            <div className="absolute top-2 right-2 md:hidden">
+                                                <span className="bg-white/90 text-primary text-xs font-bold px-2 py-1 rounded shadow-sm">
+                                                    {new Date(event.startTime).toLocaleDateString()}
+                                                </span>
                                             </div>
 
                                             {/* Image (Mobile) / Thumbnail (Desktop) */}
@@ -86,48 +84,34 @@ export default async function EventsPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Content */}
-                                            <div className="flex-1 p-6 flex flex-col justify-center">
-                                                <div className="flex items-start justify-between mb-2">
-                                                    <div>
-                                                        <span className="inline-block text-xs font-semibold text-accent uppercase tracking-wider mb-2">
-                                                            {event.category || "General"}
-                                                        </span>
-                                                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
+                                            <p className="text-muted-foreground mb-4 line-clamp-2">
+                                                {event.description}
+                                            </p>
+
+                                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-auto">
+                                                {event.startTime && (
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Clock className="w-4 h-4" />
+                                                        <span>{new Date(event.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                     </div>
-                                                </div>
-
-                                                <p className="text-muted-foreground mb-4 line-clamp-2">
-                                                    {event.desc}
-                                                </p>
-
-                                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-auto">
-                                                    {event.displayTime && (
-                                                        <div className="flex items-center gap-1.5">
-                                                            <Clock className="w-4 h-4" />
-                                                            <span>{event.displayTime}</span>
-                                                        </div>
-                                                    )}
-                                                    {event.location && (
-                                                        <div className="flex items-center gap-1.5">
-                                                            <MapPin className="w-4 h-4" />
-                                                            <span>{event.location}</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Action Button */}
-                                            <div className="p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-100">
-                                                <Button variant="ghost" className="group-hover:translate-x-1 transition-transform" asChild>
-                                                    <a href={event.actionUrl || "#"}>
-                                                        {event.action} <ArrowRight className="ml-2 w-4 h-4" />
-                                                    </a>
-                                                </Button>
+                                                )}
+                                                {event.location && (
+                                                    <div className="flex items-center gap-1.5">
+                                                        <MapPin className="w-4 h-4" />
+                                                        <span>{event.location}</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+
+                                        {/* Action Button */}
+                                        <div className="p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-100">
+                                            <Button variant="ghost" className="group-hover:translate-x-1 transition-transform">
+                                                {event.actionLabel || 'Details'} <ArrowRight className="ml-2 w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )))}
 

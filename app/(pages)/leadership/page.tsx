@@ -9,8 +9,7 @@ export const metadata = {
 };
 
 export default async function LeadershipPage() {
-    const result = await getStaffMembers();
-    const staff = result.success && result.data ? result.data : [];
+    const staff = await getAllStaff();
 
     return (
         <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
@@ -24,28 +23,26 @@ export default async function LeadershipPage() {
             {/* Main Content */}
             <section className="py-20">
                 <div className="container">
-                    {staff.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-xl border">
-                            <h3 className="text-lg font-medium text-muted-foreground">No staff members found.</h3>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                            {staff.map((member) => (
-                                <Card key={member.id} className="border-none shadow-soft hover:shadow-medium transition-all duration-300 bg-white">
-                                    <div className="relative aspect-[4/5] overflow-hidden rounded-t-xl">
-                                        {/* Grayscale to color on hover effect */}
-                                        <img
-                                            src={member.image || "/placeholder.jpg"}
-                                            alt={member.name}
-                                            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
-                                        <div className="absolute bottom-0 left-0 p-6 text-white w-full">
-                                            <p className="text-sm font-semibold text-primary-foreground/80 uppercase tracking-widest mb-1">
-                                                {member.position}
-                                            </p>
-                                            <h3 className="text-2xl font-bold">{member.name}</h3>
-                                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {staff.map((member) => (
+                            <Card key={member.id} className="border-none shadow-soft hover:shadow-medium transition-all duration-300 bg-white">
+                                <div className="relative aspect-[4/5] overflow-hidden rounded-t-xl">
+                                    {/* Grayscale to color on hover effect */}
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
+                                    <div className="absolute bottom-0 left-0 p-6 text-white w-full">
+                                        <p className="text-sm font-semibold text-primary-foreground/80 uppercase tracking-widest mb-1">{member.position}</p>
+                                        <h3 className="text-2xl font-bold">{member.name}</h3>
+                                    </div>
+                                </div>
+                                <CardContent className="p-6 pt-8 relative">
+                                    {/* Decorative quote element */}
+                                    <div className="absolute -top-6 right-6 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                                        <Mail className="w-5 h-5 text-white" />
                                     </div>
                                     <CardContent className="p-6 pt-8 relative">
                                         {/* Decorative quote element */}

@@ -65,6 +65,27 @@ Built on the bleeding edge of React and Web standards:
 
 ## 🏁 Getting Started
 
+**Requirements:** Node.js **20** (see `.nvmrc`).  Node 20 is the LTS release and avoids the engine warnings that occur on Node 22.
+
+Use the version manager of your choice to set Node 20 before installing. For example with [nvm](https://github.com/nvm-sh/nvm):
+
+```bash
+nvm install # reads .nvmrc and installs Node 20
+nvm use
+node -v       # should print v20.x.x
+```
+
+Install packages normally once the correct Node is active:
+
+```bash
+npm install
+# or
+pnpm install
+# or
+yarn install
+```
+> npm 9+ will enforce peer deps, so the repo has been updated to avoid conflicts; you **no longer** need `--legacy-peer-deps`.
+
 First, run the development server:
 
 ```bash

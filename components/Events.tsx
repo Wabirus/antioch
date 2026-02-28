@@ -1,12 +1,11 @@
-'use client';
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import { getUpcomingEvents } from "@/lib/data/events";
+import Link from "next/link";
 
-export default function Events() {
-    const events = getUpcomingEvents();
+export default async function Events() {
+    const events = await getUpcomingEvents(3);
 
     return (
         <section id="events" className="py-16 md:py-20 lg:py-24 px-4 md:px-0">
@@ -24,32 +23,21 @@ export default function Events() {
                             {/* Image Container - Responsive Height */}
                             <div className="relative overflow-hidden bg-gray-100 h-48 md:h-56 lg:h-64">
                                 <img
-                                    src={evt.img}
+                                    src={evt.image || '/placeholder.jpg'}
                                     alt={evt.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                                {/* Date Badge - Minimalistic */}
-                                <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-md shadow-sm">
-                                    <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
-                                    <span className="text-xs md:text-sm font-medium text-gray-900">{evt.date}</span>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                                <div className="absolute top-4 left-4 flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-medium">
+                                    <Calendar className="w-4 h-4 text-primary" />
+                                    <span className="font-semibold text-sm text-secondary">{new Date(evt.startTime).toLocaleDateString()}</span>
                                 </div>
                             </div>
-
-                            {/* Content Container */}
-                            <CardContent className="flex-1 flex flex-col p-5 md:p-6">
-                                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                                    {evt.title}
-                                </h3>
-                                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6 flex-grow line-clamp-2 md:line-clamp-3">
-                                    {evt.desc}
-                                </p>
-                                <Button 
-                                    className="w-full text-sm md:text-base py-2 md:py-2.5 transition-all" 
-                                    asChild
-                                >
-                                    <a href="#" onClick={(e) => e.preventDefault()}>
-                                        {evt.action}
-                                    </a>
+                            <CardContent className="p-6 flex flex-col items-start h-full pb-10">
+                                <h3 className="mb-3 text-xl font-semibold group-hover:text-primary transition-colors">{evt.title}</h3>
+                                <p className="mb-5 text-muted-foreground leading-relaxed line-clamp-2">{evt.description}</p>
+                                <Button className="w-full shadow-soft hover:shadow-medium transition-smooth mt-auto" asChild>
+                                    <Link href={evt.actionUrl || "/events"}>{evt.actionLabel || "Details"}</Link>
                                 </Button>
                             </CardContent>
                         </Card>

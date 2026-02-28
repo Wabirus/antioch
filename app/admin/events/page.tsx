@@ -1,79 +1,62 @@
-import Link from "next/link";
-import { getEvents, deleteEvent } from "@/app/actions/events";
-import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, Calendar, MapPin } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import DeleteButton from "./_components/delete-button"; // We might need a client component for delete confirmation
+import Link from 'next/link'
+import { getEvents, deleteEvent } from './actions'
 
-export default async function EventsPage() {
-    const result = await getEvents();
-    const events = result.success ? result.data : [];
+export default async function EventsList() {
+    const { events, error } = await getEvents()
+
+    if (error) {
+        return <div className="p-8 text-red-500">Error loading events.</div>
+    }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Events</h1>
-                    <p className="text-muted-foreground">
-                        Manage upcoming church events.
-                    </p>
+        <div className="flex-1 space-y-4 p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2">
+                <h2 className="text-3xl font-bold tracking-tight">Manage Events</h2>
+                <div className="flex items-center space-x-2">
+                    <Link href="/admin/events/create" className="bg-slate-900 text-white hover:bg-slate-900/90 h-10 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors">
+                        Add New Event
+                    </Link>
                 </div>
-                <Link href="/admin/events/new">
-                    <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create Event
-                    </Button>
-                </Link>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {events?.length === 0 ? (
-                    <div className="col-span-full text-center py-10 text-muted-foreground">
-                        No events found. Create one to get started.
-                    </div>
-                ) : (
-                    events?.map((event: any) => (
-                        <Card key={event.id}>
-                            <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={event.image || "/placeholder.jpg"}
-                                    alt={event.title}
-                                    className="object-cover w-full h-full"
-                                />
-                                {event.featured && (
-                                    <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-1 text-xs rounded-full">
-                                        Featured
-                                    </div>
-                                )}
-                            </div>
-                            <CardHeader className="p-4">
-                                <CardTitle className="line-clamp-1">{event.title}</CardTitle>
-                                <div className="flex items-center text-sm text-muted-foreground gap-2 mt-1">
-                                    <Calendar className="h-3 w-3" />
-                                    {new Date(event.startTime).toLocaleDateString()}
-                                </div>
-                                <div className="flex items-center text-sm text-muted-foreground gap-2">
-                                    <MapPin className="h-3 w-3" />
-                                    {event.location}
-                                </div>
-                            </CardHeader>
-                            <CardContent className="p-4 pt-0 flex justify-end gap-2">
-                                <Link href={`/admin/events/${event.id}`}>
-                                    <Button variant="outline" size="sm">
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                </Link>
-                                <form action={deleteEvent.bind(null, event.id)}>
-                                    <Button variant="destructive" size="sm" type="submit">
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </form>
-                            </CardContent>
-                        </Card>
-                    ))
-                )}
+            <div className="rounded-md border">
+                <table className="w-full caption-bottom text-sm">
+                    <thead className="[&_tr]:border-b pr-4">
+                        <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[300px]">Title</th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Category</th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Start Time</th>
+                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Location</th>
+                            <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="[&_tr:last-child]:border-0">
+                        {events?.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="p-4 text-center text-muted-foreground">No events found.</td>
+                            </tr>
+                        ) : (
+                            events?.map((event: any) => (
+                                <tr key={event.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                    <td className="p-4 align-middle font-medium">{event.title}</td>
+                                    <td className="p-4 align-middle">{event.category}</td>
+                                    <td className="p-4 align-middle">{new Date(event.startTime).toLocaleString()}</td>
+                                    <td className="p-4 align-middle">{event.location}</td>
+                                    <td className="p-4 align-middle text-right space-x-2">
+                                        <Link href={`/admin/events/${event.id}/edit`} className="text-blue-500 hover:underline">Edit</Link>
+                                        <form action={async () => {
+                                            'use server'
+                                            await deleteEvent(event.id)
+                                        }} className="inline">
+                                            <button type="submit" className="text-red-500 hover:underline">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
             </div>
         </div>
-    );
+    )
 }
