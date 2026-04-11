@@ -100,7 +100,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ---
 
-## 🗺️ Roadmap & Future Development
+## �️ Remote Image Hosts
+
+This project uses `next/image` for optimized image loading. External image URLs from services like Pexels or YouTube previews must be allowed in `next.config.ts` using `images.remotePatterns`.
+
+Example hosts already enabled in this repo:
+- `images.pexels.com`
+- `img.youtube.com`
+- `i.ytimg.com`
+
+If you add images from another external host, add that host to `remotePatterns` in `next.config.ts` so Next.js can fetch and optimize them.
+
+---
+
+## �🗺️ Roadmap & Future Development
 
 We are actively developing Phase 4 (Advanced Features) and Phase 5 (Polish).
 See `github_issues_plan.md` for detailed issue tracking.
