@@ -9,7 +9,7 @@ export async function getEvents() {
             orderBy: { startTime: 'desc' },
         })
         return { events }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch events' }
     }
 }
@@ -62,7 +62,7 @@ export async function deleteEvent(id: string) {
         })
         revalidatePath('/admin/events')
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to delete event' }
     }
 }
@@ -72,7 +72,7 @@ export async function getEventById(id: string) {
         const event = await prisma.event.findUnique({ where: { id } })
         if (!event) return { error: 'Event not found' }
         return { event }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch event' }
     }
 }

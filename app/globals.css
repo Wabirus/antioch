@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    --font-montserrat: "Avenir Next", "Segoe UI", sans-serif;
+    --font-open-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
     /* Brand Colors (Hex mapped to vars, used as-is in config or via HSL if needed) */
     /* Since we used var(--primary) in config without hsl wrapper, we can put hex here directly ? 
        Wait, typical shadcn uses hsl values. 

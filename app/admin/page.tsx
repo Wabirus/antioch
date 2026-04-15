@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getDashboardStats } from './actions'
+import prisma from '@/lib/prisma'
 
 export default async function AdminDashboardPage() {
     const supabase = await createClient()
@@ -9,6 +10,16 @@ export default async function AdminDashboardPage() {
 
     if (!user) return redirect('/admin/login')
 
+    const dbUser = await prisma.user.findUnique({
+        where: { email: user.email ?? '' },
+        include: {
+            roles: {
+                include: { role: true }
+            }
+        }
+    })
+
+    const isAdmin = dbUser?.roles.some((role) => role.role.name === 'ADMIN') ?? false
     const stats = await getDashboardStats()
 
     const statCards = [
@@ -52,6 +63,7 @@ export default async function AdminDashboardPage() {
         { label: 'Add Event', href: '/admin/events/create', style: 'bg-blue-600 hover:bg-blue-700 text-white' },
         { label: 'Add Ministry', href: '/admin/ministries/create', style: 'bg-emerald-600 hover:bg-emerald-700 text-white' },
         { label: 'Add Staff', href: '/admin/staff/create', style: 'bg-amber-600 hover:bg-amber-700 text-white' },
+        ...(isAdmin ? [{ label: 'Add Stream', href: '/admin/streams/create', style: 'bg-red-600 hover:bg-red-700 text-white' }] : []),
     ]
 
     return (

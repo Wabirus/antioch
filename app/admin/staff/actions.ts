@@ -9,7 +9,7 @@ export async function getStaff() {
             orderBy: { displayOrder: 'asc' },
         })
         return { staff }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch staff' }
     }
 }
@@ -56,7 +56,7 @@ export async function deleteStaff(id: string) {
         })
         revalidatePath('/admin/staff')
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to delete staff member' }
     }
 }
@@ -66,7 +66,7 @@ export async function getStaffById(id: string) {
         const staff = await prisma.staff.findUnique({ where: { id } })
         if (!staff) return { error: 'Staff member not found' }
         return { staff }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch staff member' }
     }
 }

@@ -1,71 +1,116 @@
-import styles from "./LiveStreamPlayer.module.css";
+import type { StreamStatus } from '@/lib/streaming/status'
+import { STREAM_STATUS_LABELS } from '@/lib/streaming/status'
+import {
+  normalizePlatformUrl,
+  normalizeStreamEmbedUrl,
+} from '@/lib/streaming/urls'
+
+import styles from './LiveStreamPlayer.module.css'
 
 interface LiveStreamPlayerProps {
-  embedUrl?: string | null;
+  embedUrl?: string | null
+  title?: string | null
+  status?: StreamStatus | null
+  youtubeUrl?: string | null
+  facebookUrl?: string | null
+  tiktokUrl?: string | null
 }
 
-function toYouTubeEmbedUrl(rawUrl?: string | null): string | null {
-  if (!rawUrl) {
-    return null;
-  }
-
-  try {
-    const parsed = new URL(rawUrl);
-    const host = parsed.hostname.replace("www.", "");
-
-    if (host === "youtube.com" || host === "m.youtube.com") {
-      if (parsed.pathname.startsWith("/embed/")) {
-        return parsed.toString();
-      }
-
-      const videoId = parsed.searchParams.get("v");
-      if (parsed.pathname === "/watch" && videoId) {
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-
-      if (parsed.pathname.startsWith("/live/")) {
-        const liveId = parsed.pathname.split("/")[2];
-        if (liveId) {
-          return `https://www.youtube.com/embed/${liveId}`;
-        }
-      }
-    }
-
-    if (host === "youtu.be") {
-      const videoId = parsed.pathname.replace("/", "");
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
+type PlatformLink = {
+  label: string
+  href: string
 }
 
-export default function LiveStreamPlayer({ embedUrl }: LiveStreamPlayerProps) {
-  const safeEmbedUrl = toYouTubeEmbedUrl(embedUrl);
+const STATUS_CLASS_BY_VALUE: Record<StreamStatus, string> = {
+  offline: styles.statusOffline,
+  live: styles.statusLive,
+  scheduled: styles.statusScheduled,
+}
+
+function buildPlatformLinks(props: Pick<LiveStreamPlayerProps, 'youtubeUrl' | 'facebookUrl' | 'tiktokUrl'>) {
+  const links: PlatformLink[] = []
+
+  const youtubeUrl = props.youtubeUrl ? normalizePlatformUrl(props.youtubeUrl, 'youtube') : null
+  const facebookUrl = props.facebookUrl ? normalizePlatformUrl(props.facebookUrl, 'facebook') : null
+  const tiktokUrl = props.tiktokUrl ? normalizePlatformUrl(props.tiktokUrl, 'tiktok') : null
+
+  if (youtubeUrl) {
+    links.push({ label: 'Watch on YouTube', href: youtubeUrl })
+  }
+
+  if (facebookUrl) {
+    links.push({ label: 'Watch on Facebook', href: facebookUrl })
+  }
+
+  if (tiktokUrl) {
+    links.push({ label: 'Watch on TikTok', href: tiktokUrl })
+  }
+
+  return links
+}
+
+export default function LiveStreamPlayer({
+  embedUrl,
+  title,
+  status,
+  youtubeUrl,
+  facebookUrl,
+  tiktokUrl,
+}: LiveStreamPlayerProps) {
+  const safeEmbedUrl = embedUrl ? normalizeStreamEmbedUrl(embedUrl) : null
+  const platformLinks = buildPlatformLinks({ youtubeUrl, facebookUrl, tiktokUrl })
 
   if (!safeEmbedUrl) {
     return (
       <div className={styles.fallback}>
-        <h2>No live stream is available right now.</h2>
-        <p>Please check back during our scheduled service time.</p>
+        <p>No live stream is currently available. Please check back later.</p>
       </div>
-    );
+    )
   }
 
   return (
     <div className={styles.playerShell}>
+      {(title || status || platformLinks.length > 0) ? (
+        <div className={styles.playerHeader}>
+          <div className={styles.playerMeta}>
+            {title ? <h2 className={styles.playerTitle}>{title}</h2> : null}
+            {status ? (
+              <span
+                className={`${styles.statusBadge} ${STATUS_CLASS_BY_VALUE[status]}`}
+              >
+                {STREAM_STATUS_LABELS[status]}
+              </span>
+            ) : null}
+          </div>
+
+          {platformLinks.length > 0 ? (
+            <div className={styles.platformLinks}>
+              {platformLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={styles.platformLink}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className={styles.videoWrap}>
         <iframe
           src={safeEmbedUrl}
-          title="YouTube live stream"
+          title={title ? `${title} live stream` : 'Live stream'}
+          loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
         />
       </div>
     </div>
-  );
+  )
 }

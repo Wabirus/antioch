@@ -1,38 +1,45 @@
 import { PageHero } from "@/components/ui/PageHero";
 import SermonList from "@/components/SermonList";
-import { getAllSermons, getUniqueSeries, getUniqueTopics, getUniqueSpeakers } from "@/lib/data/sermons";
+import {
+  getAllSermons,
+  getUniqueSeries,
+  getUniqueSpeakers,
+  getUniqueTopics,
+} from "@/lib/data/sermons";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
-    title: "Sermons Library | Antioch Independent Baptist Churches of Kenya",
-    description: "Explore our archive of Bible-based teachings and messages that inspire and challenge our faith community.",
+  title: "Sermons",
+  description:
+    "Listen to recent teaching and browse the sermon library by series, topic, or speaker.",
 };
 
 export default async function SermonsPage() {
-    const allSermons = await getAllSermons();
-    const seriesList = await getUniqueSeries();
-    const topicsList = await getUniqueTopics();
-    const speakersList = await getUniqueSpeakers();
+  const [allSermons, seriesList, topicsList, speakersList] = await Promise.all([
+    getAllSermons(),
+    getUniqueSeries(),
+    getUniqueTopics(),
+    getUniqueSpeakers(),
+  ]);
 
-    return (
-        <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
-            {/* Hero Section */}
-            <PageHero
-                title="Sermons Library"
-                description="Explore our archive of Bible-based teachings and messages that inspire and challenge our faith community."
-                gradient="blue"
-            />
-
-            {/* Main Content */}
-            <section className="py-16">
-                <div className="container">
-                    <SermonList
-                        allSermons={allSermons}
-                        seriesList={seriesList}
-                        topicsList={topicsList}
-                        speakersList={speakersList}
-                    />
-                </div>
-            </section>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50/60">
+      <PageHero
+        title="Sermons Library"
+        description="Browse teaching by topic, speaker, or series and hear the heart of Antioch through biblical preaching."
+        gradient="blue"
+      />
+      <section className="py-16">
+        <div className="container">
+          <SermonList
+            allSermons={allSermons}
+            seriesList={seriesList}
+            topicsList={topicsList}
+            speakersList={speakersList}
+          />
         </div>
-    );
+      </section>
+    </div>
+  );
 }

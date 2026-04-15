@@ -1,0 +1,36 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 */1 * * *' # every hour
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      PING_TABLE: staff
+    steps:
+      - name: Validate environment
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "Missing required secrets: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
+            exit 1
+          fi
+      - name: Ping Supabase REST endpoint
+        run: |
+          echo "Pinging Supabase project: $SUPABASE_URL"
+          status=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -X GET "$SUPABASE_URL/rest/v1/$PING_TABLE?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Accept: application/json")
+          echo "HTTP status: $status"
+          if [ "$status" != "200" ] && [ "$status" != "404" ] && [ "$status" != "401" ]; then
+            echo "Unexpected response code from Supabase: $status"
+            exit 1
+          fi
+      - name: Keepalive complete
+        run: echo "Supabase keep-alive ping completed."

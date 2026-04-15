@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getEvents, deleteEvent } from './actions'
+import type { Event } from '@/lib/data/events'
 
 export default async function EventsList() {
     const { events, error } = await getEvents()
@@ -36,7 +37,7 @@ export default async function EventsList() {
                                 <td colSpan={5} className="p-4 text-center text-muted-foreground">No events found.</td>
                             </tr>
                         ) : (
-                            events?.map((event: any) => (
+                            events?.map((event: Event) => (
                                 <tr key={event.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                     <td className="p-4 align-middle font-medium">{event.title}</td>
                                     <td className="p-4 align-middle">{event.category}</td>

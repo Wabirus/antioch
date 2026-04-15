@@ -5,14 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle2, Send } from "lucide-react";
+import type { ContactPayload } from "@/lib/validation/contact";
 
 export default function ContactForm() {
-    const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+    const [formData, setFormData] = useState<ContactPayload>({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+        website: '',
+    });
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('submitting');
+        setErrorMessage('');
         try {
             const res = await fetch('/api/contact', {
                 method: 'POST',
@@ -21,17 +30,21 @@ export default function ContactForm() {
             });
             if (res.ok) {
                 setStatus('success');
-                setFormData({ name: '', email: '', phone: '', message: '' });
+                setFormData({ name: '', email: '', phone: '', message: '', website: '' });
             } else {
+                const payload = await res.json().catch(() => null);
+                setErrorMessage(payload?.error ?? 'Failed to send message. Please try again.');
                 setStatus('error');
             }
         } catch {
+            setErrorMessage('Failed to send message. Please try again.');
             setStatus('error');
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+        const { id, value } = e.target;
+        setFormData((current) => ({ ...current, [id]: value }));
     };
 
     if (status === 'success') {
@@ -42,7 +55,7 @@ export default function ContactForm() {
                 </div>
                 <h3 className="text-green-700 mb-3 text-2xl font-bold">Thank You!</h3>
                 <p className="text-green-700 mb-6 text-lg">
-                    Your message has been sent successfully. We'll get back to you as soon as possible.
+                    Your message has been sent successfully. We&apos;ll get back to you as soon as possible.
                 </p>
                 <Button
                     onClick={() => setStatus('idle')}
@@ -59,6 +72,16 @@ export default function ContactForm() {
     return (
         <div className="contact-form max-w-[650px] mx-auto bg-white p-8 rounded-xl shadow-medium">
             <form id="contactForm" onSubmit={handleSubmit} className="space-y-6">
+                <input
+                    type="text"
+                    id="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                />
                 <div className="space-y-2">
                     <Label htmlFor="name" className="text-base font-semibold text-secondary">Name *</Label>
                     <Input
@@ -122,9 +145,7 @@ export default function ContactForm() {
                 </Button>
                 {status === 'error' && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <p className="text-red-700 font-semibold text-center">
-                            Failed to send message. Please try again or contact us directly.
-                        </p>
+                        <p className="text-red-700 font-semibold text-center">{errorMessage}</p>
                     </div>
                 )}
             </form>

@@ -1,17 +1,24 @@
 import { NextResponse } from 'next/server';
+import { contactSchema } from '@/lib/validation/contact';
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { name, email, message } = body;
+        const parsed = contactSchema.safeParse(body);
 
-        // Basic server-side validation
-        if (!name || !email || !message) {
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        if (!parsed.success) {
+            return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid submission.' }, { status: 400 });
         }
 
-        // Log the payload as requested
-        console.log('Contact Form Submission Recieved:', body);
+        if (parsed.data.website) {
+            return NextResponse.json({ ok: true });
+        }
+
+        console.info('Contact form submission received:', {
+            name: parsed.data.name,
+            email: parsed.data.email,
+            phone: parsed.data.phone,
+        });
 
         return NextResponse.json({ ok: true });
     } catch (error) {

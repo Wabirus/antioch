@@ -63,6 +63,12 @@ enum PermissionKey {
   MANAGE_USERS
 }
 
+enum StreamStatus {
+  offline
+  live
+  scheduled
+}
+
 model UserRole {
   userId String
   roleId String
@@ -157,4 +163,26 @@ model Sermon {
   duration         Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+// =============================
+// Streaming Model
+// =============================
+
+model Stream {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  youtubeUrl  String?
+  facebookUrl String?
+  tiktokUrl   String?
+  embedUrl    String
+  status      StreamStatus @default(offline)
+  isActive    Boolean      @default(false)
+  scheduledAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status, isActive])
+  @@index([updatedAt])
 }

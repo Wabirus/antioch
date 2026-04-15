@@ -9,7 +9,7 @@ export async function getSermons() {
             orderBy: { date: 'desc' },
         })
         return { sermons }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch sermons' }
     }
 }
@@ -66,7 +66,7 @@ export async function deleteSermon(id: string) {
         })
         revalidatePath('/admin/sermons')
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to delete sermon' }
     }
 }
@@ -76,7 +76,7 @@ export async function getSermonById(id: string) {
         const sermon = await prisma.sermon.findUnique({ where: { id } })
         if (!sermon) return { error: 'Sermon not found' }
         return { sermon }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch sermon' }
     }
 }

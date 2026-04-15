@@ -9,7 +9,7 @@ export async function getMinistries() {
             orderBy: { name: 'asc' },
         })
         return { ministries }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch ministries' }
     }
 }
@@ -56,7 +56,7 @@ export async function deleteMinistry(id: string) {
         })
         revalidatePath('/admin/ministries')
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to delete ministry' }
     }
 }
@@ -66,7 +66,7 @@ export async function getMinistryById(id: string) {
         const ministry = await prisma.ministry.findUnique({ where: { id } })
         if (!ministry) return { error: 'Ministry not found' }
         return { ministry }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to fetch ministry' }
     }
 }

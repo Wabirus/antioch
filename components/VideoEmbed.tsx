@@ -8,36 +8,12 @@ interface VideoEmbedProps {
   title?: string;
 }
 
-export default function VideoEmbed({
-  embedUrl,
-  title = "Embedded video",
-}: VideoEmbedProps) {
-  const [isOffline, setIsOffline] = useState<boolean>(
-    typeof navigator !== "undefined" ? !navigator.onLine : false
-  );
+function VideoFrame({ embedUrl, title }: Required<VideoEmbedProps>) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasLoadError, setHasLoadError] = useState(false);
 
   useEffect(() => {
-    const handleOffline = () => setIsOffline(true);
-    const handleOnline = () => setIsOffline(false);
-
-    window.addEventListener("offline", handleOffline);
-    window.addEventListener("online", handleOnline);
-
-    return () => {
-      window.removeEventListener("offline", handleOffline);
-      window.removeEventListener("online", handleOnline);
-    };
-  }, []);
-
-  useEffect(() => {
-    setHasLoaded(false);
-    setHasLoadError(false);
-  }, [embedUrl]);
-
-  useEffect(() => {
-    if (!embedUrl || isOffline || hasLoaded || hasLoadError) {
+    if (!embedUrl || hasLoaded || hasLoadError) {
       return;
     }
 
@@ -46,16 +22,12 @@ export default function VideoEmbed({
     }, 10000);
 
     return () => window.clearTimeout(timeout);
-  }, [embedUrl, isOffline, hasLoaded, hasLoadError]);
+  }, [embedUrl, hasLoaded, hasLoadError]);
 
-  const showFallback = !embedUrl || isOffline || hasLoadError;
-
-  if (showFallback) {
+  if (hasLoadError) {
     return (
       <div className={styles.fallback} role="status" aria-live="polite">
-        <p>
-          Service is currently offline. Please check back during service hours.
-        </p>
+        <p>Service is currently offline. Please check back during service hours.</p>
       </div>
     );
   }
@@ -79,4 +51,36 @@ export default function VideoEmbed({
       />
     </div>
   );
+}
+
+export default function VideoEmbed({
+  embedUrl,
+  title = "Embedded video",
+}: VideoEmbedProps) {
+  const [isOffline, setIsOffline] = useState<boolean>(
+    typeof navigator !== "undefined" ? !navigator.onLine : false
+  );
+
+  useEffect(() => {
+    const handleOffline = () => setIsOffline(true);
+    const handleOnline = () => setIsOffline(false);
+
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, []);
+
+  if (!embedUrl || isOffline) {
+    return (
+      <div className={styles.fallback} role="status" aria-live="polite">
+        <p>Service is currently offline. Please check back during service hours.</p>
+      </div>
+    );
+  }
+
+  return <VideoFrame key={embedUrl} embedUrl={embedUrl} title={title} />;
 }

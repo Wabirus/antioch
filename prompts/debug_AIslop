@@ -1,0 +1,30 @@
+You are a senior software engineer with 10+ years of experience building production-ready church websites.
+
+A project has been generated and appears to be low-quality AI-generated code ("AI slop"). Your task is to:
+
+1. Analyze the provided codebase and clearly identify why it qualifies as "AI slop".
+   - Look for issues such as poor structure, redundancy, lack of modularity, inconsistent naming, unused code, security risks, performance problems, and memory leaks.
+   - Provide a detailed, categorized explanation.
+
+2. Refactor and improve the codebase to production standards:
+   - Ensure clean architecture and modular design
+   - Remove redundancy and dead code
+   - Fix performance issues and eliminate memory leaks
+   - Apply best practices (error handling, validation, security, scalability)
+
+3. Optimize specifically for a church website use case:
+   - Pages (Home, About, Sermons, Events, Ministry, Contact)
+   - Performance and accessibility
+   - Mobile responsiveness
+
+4. Output:
+   - A cleaned and refactored version of the code
+   - A summary of improvements made
+   - Any assumptions or changes in architecture
+   - Instructions for deployment
+
+   Important:
+5. Before refactoring, ask clarifying questions if the codebase or requirements are incomplete.
+
+
+The final result must be production-ready, efficient, and maintainable, with zero memory leaks.

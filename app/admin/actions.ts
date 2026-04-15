@@ -55,7 +55,7 @@ export async function getUsers() {
                 roles: roleMap.get(u.email ?? '') ?? [],
             }))
         }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to load users' }
     }
 }
@@ -105,7 +105,7 @@ export async function removeRole(email: string, roleName: 'ADMIN' | 'STAFF') {
         await prisma.userRole.deleteMany({ where: { userId: user.id, roleId: role.id } })
         revalidatePath('/admin/users')
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: 'Failed to remove role' }
     }
 }

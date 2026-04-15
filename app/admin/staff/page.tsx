@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getStaff, deleteStaff } from './actions'
+import type { StaffMember } from '@/lib/data/staff'
 
 export default async function StaffList() {
     const { staff, error } = await getStaff()
@@ -36,7 +37,7 @@ export default async function StaffList() {
                                 <td colSpan={5} className="p-4 text-center text-muted-foreground">No staff profiles found.</td>
                             </tr>
                         ) : (
-                            staff?.map((member: any) => (
+                            staff?.map((member: StaffMember) => (
                                 <tr key={member.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                     <td className="p-4 align-middle text-muted-foreground">{member.displayOrder}</td>
                                     <td className="p-4 align-middle font-medium">{member.name}</td>

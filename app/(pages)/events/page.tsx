@@ -1,136 +1,82 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import { PageHero } from "@/components/ui/PageHero";
-import { getAllEvents, Event } from "@/lib/data/events";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
+import { getAllEvents } from "@/lib/data/events";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
-    title: "Events | Antioch Independent Baptist Churches of Kenya",
-    description: "Stay up to date with what's happening at Antioch. Join us for upcoming services, conferences, and community events.",
+  title: "Events",
+  description:
+    "Stay up to date with worship gatherings, prayer meetings, and community events at Antioch.",
 };
 
 export default async function EventsPage() {
-    const events = await getAllEvents();
+  const events = await getAllEvents();
 
-    // Group events by month
-    const eventsByMonth = events.reduce((acc, event) => {
-        const month = event.startTime ? new Date(event.startTime).toLocaleString('default', { month: 'long' }) : "Upcoming";
-        if (!acc[month]) {
-            acc[month] = [];
-        }
-        acc[month].push(event);
-        return acc;
-    }, {} as Record<string, Event[]>);
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50/60">
+      <PageHero
+        title="Events Calendar"
+        description="Plan ahead for church gatherings, discipleship opportunities, and community events."
+        gradient="blue"
+      />
 
-    const months = Object.keys(eventsByMonth);
-
-    return (
-        <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
-            {/* Hero Section */}
-            <PageHero
-                title="Events Calendar"
-                description="Connect, grow, and serve with us. See what's coming up in the life of our church."
-                gradient="blue"
-            />
-
-            {/* Main Content */}
-            <section className="py-20">
-                <div className="container max-w-5xl mx-auto">
-
-                    {months.map((month) => (
-                        <div key={month} className="mb-16 last:mb-0">
-                            <h2 className="text-2xl font-bold mb-8 flex items-center gap-4">
-                                <span className="bg-primary/10 text-primary px-4 py-2 rounded-lg">{month}</span>
-                                <span className="h-px flex-1 bg-border bg-slate-200"></span>
-                            </h2>
-
-                            <div className="space-y-6">
-                                {eventsByMonth[month].map((event) => (
-                                    <div key={event.id} className="group bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col md:flex-row">
-                                        {/* Date Block (Desktop) */}
-                                        <div className="hidden md:flex flex-col items-center justify-center w-32 bg-slate-50 border-r border-slate-100 p-6 text-center">
-                                            <span className="text-sm font-bold text-muted-foreground uppercase">{new Date(event.startTime).toLocaleString('default', { month: 'short' })}</span>
-                                            <span className="text-3xl font-bold text-secondary my-1">{new Date(event.startTime).getDate()}</span>
-                                        </div>
-
-                                        {/* Image (Mobile) / Thumbnail (Desktop) */}
-                                        <div className="md:w-64 h-48 md:h-auto relative">
-                                            <img
-                                                src={event.image || '/placeholder.jpg'}
-                                                alt={event.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                            <div className="absolute top-2 right-2 md:hidden">
-                                                <span className="bg-white/90 text-primary text-xs font-bold px-2 py-1 rounded shadow-sm">
-                                                    {new Date(event.startTime).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Content */}
-                                        <div className="flex-1 p-6 flex flex-col justify-center">
-                                            <div className="flex items-start justify-between mb-2">
-                                                <div>
-                                                    <span className="inline-block text-xs font-semibold text-accent uppercase tracking-wider mb-2">
-                                                        {event.category || "General"}
-                                                    </span>
-                                                    <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
-                                                </div>
-                                            </div>
-
-                                            <p className="text-muted-foreground mb-4 line-clamp-2">
-                                                {event.description}
-                                            </p>
-
-                                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-auto">
-                                                {event.startTime && (
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Clock className="w-4 h-4" />
-                                                        <span>{new Date(event.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                    </div>
-                                                )}
-                                                {event.location && (
-                                                    <div className="flex items-center gap-1.5">
-                                                        <MapPin className="w-4 h-4" />
-                                                        <span>{event.location}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* Action Button */}
-                                        <div className="p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-100">
-                                            <Button variant="ghost" className="group-hover:translate-x-1 transition-transform">
-                                                {event.actionLabel || 'Details'} <ArrowRight className="ml-2 w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-
+      <section className="py-16 md:py-20">
+        <div className="container max-w-5xl space-y-6">
+          {events.map((event) => (
+            <article
+              key={event.id}
+              className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-soft md:grid md:grid-cols-[260px_1fr]"
+            >
+              <div className="relative min-h-64 bg-slate-100">
+                <Image
+                  src={event.image || "/images/antioch.jpeg"}
+                  alt={event.title}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 260px, 100vw"
+                />
+              </div>
+              <div className="p-6 md:p-8">
+                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">
+                  {event.category || "Church Event"}
+                </p>
+                <h2 className="mt-3 text-2xl font-semibold text-slate-950">
+                  {event.title}
+                </h2>
+                <p className="mt-4 leading-7 text-slate-600">{event.description}</p>
+                <div className="mt-6 grid gap-3 text-sm text-slate-500 md:grid-cols-3">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <span>{new Date(event.startTime).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span>
+                      {new Date(event.startTime).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>{event.location}</span>
+                  </div>
                 </div>
-            </section>
-
-            {/* Calendar Subscription */}
-            <section className="py-16 bg-slate-900 text-white">
-                <div className="container text-center">
-                    <Calendar className="w-12 h-12 mx-auto mb-6 text-accent opacity-80" />
-                    <h2 className="text-3xl font-bold mb-4">Never Miss an Event</h2>
-                    <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-                        Subscribe to our digital calendar to get reminders for all upcoming services and events directly on your phone.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button size="lg" className="bg-white text-slate-900 hover:bg-gray-100">
-                            Add to Google Calendar
-                        </Button>
-                        <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-                            Add to Apple Calendar
-                        </Button>
-                    </div>
-                </div>
-            </section>
+                <Button className="mt-8" asChild>
+                  <Link href={event.actionUrl || "/contact"}>
+                    {event.actionLabel || "Ask About This Event"}
+                  </Link>
+                </Button>
+              </div>
+            </article>
+          ))}
         </div>
-    );
+      </section>
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, act as import_act } from '@testing-library/react';
+import { render, screen, act as import_act } from '@testing-library/react';
 
 import VideoEmbed from '@/components/VideoEmbed';
 

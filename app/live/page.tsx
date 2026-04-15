@@ -1,37 +1,49 @@
-import { PageHero } from "@/components/ui/PageHero";
-import LiveStreamPlayer from "@/components/streaming/LiveStreamPlayer";
+import { PageHero } from '@/components/ui/PageHero'
+import LiveStreamPlayer from '@/components/streaming/LiveStreamPlayer'
+import { getActiveLiveStream } from '@/app/admin/streams/actions'
 
 export const metadata = {
-  title: "LiveStream | Antioch Independent Baptist Churches of Kenya",
-  description:
-    "Join our live YouTube stream and worship with Antioch from anywhere.",
-};
+  title: 'Live Stream | Antioch Independent Baptist Churches of Kenya',
+  description: 'Watch the current Antioch live stream from anywhere.',
+}
 
-export default function LiveStreamPage() {
-  const embedUrl =
-    process.env.LIVE_STREAM_EMBED_URL ??
-    process.env.NEXT_PUBLIC_LIVE_STREAM_EMBED_URL ??
-    "";
+export const dynamic = 'force-dynamic'
+
+export default async function LiveStreamPage() {
+  const { stream } = await getActiveLiveStream()
 
   return (
-    <div className="bg-gradient-to-b from-white to-slate-50/50 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50/50">
       <PageHero
-        title="LiveStream"
-        description="Join our service live from anywhere."
+        title="Live Stream"
+        description="The current service appears here when a stream is active and live."
         gradient="blue"
-      />
+      >
+        {stream ? (
+          <div className="mx-auto flex max-w-3xl flex-col gap-2 text-sm md:flex-row md:items-center md:justify-center">
+            <span className="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-3 py-1 font-semibold text-red-700">
+              🔴 LIVE
+            </span>
+            <span className="text-white/90">{stream.title}</span>
+          </div>
+        ) : null}
+      </PageHero>
 
       <section className="py-12 md:py-16">
-        <div className="container max-w-5xl">
-          <LiveStreamPlayer embedUrl={embedUrl} />
-          <p className="mt-4 text-sm text-muted-foreground">
-            Configure the stream URL with{" "}
-            <code className="font-mono">LIVE_STREAM_EMBED_URL</code> (or{" "}
-            <code className="font-mono">NEXT_PUBLIC_LIVE_STREAM_EMBED_URL</code>
-            ).
-          </p>
+        <div className="container max-w-5xl space-y-6">
+          <LiveStreamPlayer
+            embedUrl={stream?.embedUrl ?? null}
+            title={stream?.title ?? null}
+            status={stream?.status ?? null}
+            youtubeUrl={stream?.youtubeUrl ?? null}
+            facebookUrl={stream?.facebookUrl ?? null}
+            tiktokUrl={stream?.tiktokUrl ?? null}
+          />
+          {stream?.description ? (
+            <p className="text-sm text-muted-foreground">{stream.description}</p>
+          ) : null}
         </div>
       </section>
     </div>
-  );
+  )
 }

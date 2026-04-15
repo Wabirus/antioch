@@ -1,5 +1,4 @@
 import { getUsers, assignRole, removeRole } from '../actions'
-import { RoleName } from '@prisma/client'
 
 export default async function UsersPage() {
     const result = await getUsers()

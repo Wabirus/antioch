@@ -1,47 +1,55 @@
-import { Button } from "@/components/ui/button";
-import { PlayCircle } from "lucide-react";
-import { getFeaturedSermon } from "@/lib/data/sermons";
 import Link from "next/link";
+import { PlayCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SiteSection } from "@/components/site/SiteSection";
+import { getFeaturedSermon } from "@/lib/data/sermons";
 
 export default async function FeaturedSermon() {
-    const featuredSermon = await getFeaturedSermon();
+  const featuredSermon = await getFeaturedSermon();
 
-    if (!featuredSermon) return null;
+  if (!featuredSermon) {
+    return null;
+  }
 
-    return (
-        <section id="sermons" className="bg-gradient-to-b from-white to-slate-50/50 py-20">
-            <div className="container">
-                <div className="section-title">
-                    <h2>Featured Sermon</h2>
-                    <p>Dive into our latest sermon that inspires and challenges our faith community</p>
-                </div>
-                <div className="sermon-container max-w-6xl mx-auto">
-                    <div className="sermon-video-wrapper">
-                        <div className="sermon-video">
-                            <iframe
-                                src={featuredSermon.videoUrl}
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                className="w-full aspect-video rounded-xl"
-                            ></iframe>
-                        </div>
-                    </div>
-                    <div className="sermon-content mt-10 text-center max-w-3xl mx-auto">
-                        <div className="flex items-center justify-center gap-2 mb-4">
-                            <PlayCircle className="w-5 h-5 text-primary" />
-                            <span className="text-sm font-semibold text-primary uppercase tracking-wide">Latest Message</span>
-                        </div>
-                        <h3 className="text-3xl md:text-4xl mb-4">{featuredSermon.title}</h3>
-                        <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
-                            {featuredSermon.description}
-                        </p>
-                        <Button size="lg" className="shadow-medium hover:shadow-large transition-smooth" asChild>
-                            <Link href="/sermons">View All Sermons</Link>
-                        </Button>
-                    </div>
-                </div>
+  return (
+    <SiteSection
+      id="sermons"
+      title="Recent teaching from Antioch"
+      description="A featured sermon on the homepage gives visitors a quick way to hear the church’s voice before they ever visit."
+      className="bg-slate-50"
+      contentClassName="mx-auto max-w-5xl"
+    >
+      <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-medium">
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="bg-[linear-gradient(135deg,#15355f_0%,#15a4e2_100%)] p-8 text-white md:p-10">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold">
+              <PlayCircle className="h-4 w-4" />
+              Featured Sermon
             </div>
-        </section>
-    );
+            <h3 className="mt-6 text-3xl font-semibold md:text-4xl">
+              {featuredSermon.title}
+            </h3>
+            <p className="mt-4 text-sm font-medium uppercase tracking-[0.2em] text-sky-100">
+              {featuredSermon.speaker}
+            </p>
+            <p className="mt-6 max-w-2xl text-base leading-7 text-sky-50/90">
+              {featuredSermon.description}
+            </p>
+            <Button className="mt-8 bg-white text-slate-950 hover:bg-slate-100" asChild>
+              <Link href="/sermons">Browse Sermons</Link>
+            </Button>
+          </div>
+          <div className="flex items-center justify-center bg-slate-950 p-8">
+            <iframe
+              src={featuredSermon.videoUrl}
+              title={featuredSermon.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="aspect-video w-full rounded-2xl"
+            />
+          </div>
+        </div>
+      </div>
+    </SiteSection>
+  );
 }

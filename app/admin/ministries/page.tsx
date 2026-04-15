@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getMinistries, deleteMinistry } from './actions'
+import type { Ministry } from '@/lib/data/ministries'
 
 export default async function MinistriesList() {
     const { ministries, error } = await getMinistries()
@@ -35,7 +36,7 @@ export default async function MinistriesList() {
                                 <td colSpan={4} className="p-4 text-center text-muted-foreground">No ministries found.</td>
                             </tr>
                         ) : (
-                            ministries?.map((ministry: any) => (
+                            ministries?.map((ministry: Ministry) => (
                                 <tr key={ministry.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                     <td className="p-4 align-middle font-medium">{ministry.name}</td>
                                     <td className="p-4 align-middle">{ministry.leader}</td>

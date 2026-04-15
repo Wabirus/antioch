@@ -3,12 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { siteConfig } from '@/lib/site';
 import { cn } from '@/lib/utils';
-import {
-    Menu, X, Search, User, Heart, Users, Calendar,
-    MapPin, Video, HandHeart, Sparkles, BookOpen, ShoppingBag, Info
-} from 'lucide-react';
+import { Menu, X, Search, User, ChevronDown } from 'lucide-react';
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -32,21 +29,8 @@ export default function Header() {
         };
     }, [isOpen]);
 
-    const sidebarItems = {
-        involved: [
-            { label: 'Visit Antioch', sub: 'Find a location near you', icon: MapPin, href: '/new-here' },
-            { label: 'Live Streams', sub: 'Join us from anywhere', icon: Video, href: '/live' },
-            { label: 'Ministries', sub: 'Relationships to grow your faith', icon: Users, href: '/ministries' },
-            { label: 'Giving', sub: 'Generosity in action', icon: Heart, href: '/give' },
-            { label: 'Volunteer', sub: 'Serve at your local campus', icon: HandHeart, href: '/ministries' },
-            { label: 'Events', sub: 'Meaningful experiences', icon: Calendar, href: '/events' },
-            { label: 'Need Prayer?', sub: 'Support through faith', icon: Sparkles, href: '/prayer' },
-        ],
-        discover: [
-            { label: 'Sermons', icon: BookOpen, href: '/sermons' },
-            { label: 'Leadership', icon: Info, href: '/leadership' },
-        ]
-    };
+    const mainNav = siteConfig.nav.main;
+    const actionNav = siteConfig.nav.actions;
 
     return (
         <>
@@ -91,8 +75,9 @@ export default function Header() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-primary transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Search"
+                                placeholder="Search pages"
                                 className="w-full bg-slate-50 border border-slate-200 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-medium text-slate-600 placeholder:text-slate-400"
+                                aria-label="Search pages"
                             />
                         </div>
                     </div>
@@ -101,11 +86,30 @@ export default function Header() {
                     <div className="flex items-center gap-6">
                         {/* Desktop Links */}
                         <nav className="hidden lg:flex items-center gap-6 font-semibold text-sm text-slate-700">
-                            <Link href="/give" className="hover:text-black transition-colors">Give</Link>
-                            <Link href="/ministries" className="hover:text-black transition-colors">Groups</Link>
-                            <Link href="/ministries" className="hover:text-black transition-colors">Serve</Link>
-                            <Link href="/events" className="hover:text-black transition-colors">Events</Link>
-                            <Link href="/leadership" className="hover:text-black transition-colors">About</Link>
+                            {mainNav.slice(1).map((item) => (
+                                <div key={item.label} className="relative group">
+                                    <Link href={item.href} className="inline-flex items-center gap-1 hover:text-black transition-colors">
+                                        {item.label}
+                                        {item.children ? (
+                                            <ChevronDown className="h-3 w-3 text-slate-500 transition-transform duration-200 group-hover:-rotate-180" />
+                                        ) : null}
+                                    </Link>
+
+                                    {item.children ? (
+                                        <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute left-0 top-full z-50 mt-2 min-w-[220px] rounded-3xl border border-slate-200 bg-white p-2 shadow-soft transition-all duration-200">
+                                            {item.children.map((child) => (
+                                                <Link
+                                                    key={child.href}
+                                                    href={child.href}
+                                                    className="block rounded-2xl px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                                                >
+                                                    {child.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    ) : null}
+                                </div>
+                            ))}
                         </nav>
 
                         {/* Mobile Search Trigger */}
@@ -118,6 +122,7 @@ export default function Header() {
                             href="/admin/login"
                             className="text-slate-500 hover:text-slate-900 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full"
                             title="Staff Login"
+                            aria-label="Staff login"
                         >
                             <User size={20} className="fill-slate-300" />
                         </Link>
@@ -143,7 +148,7 @@ export default function Header() {
                 <div className="p-6 flex flex-col h-full">
                     {/* Header of Drawer */}
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-xl font-bold text-slate-900 tracking-tight">Get Involved</h2>
+                        <h2 className="text-xl font-bold text-slate-900 tracking-tight">Explore Antioch</h2>
                         <button
                             onClick={() => setIsOpen(false)}
                             className="p-2 hover:bg-slate-100 rounded-full transition-colors"
@@ -154,39 +159,46 @@ export default function Header() {
 
                     {/* Navigation Groups */}
                     <div className="space-y-8 flex-1">
-                        {/* Get Involved Section */}
-                        <div className="space-y-4">
-                            {sidebarItems.involved.map((item, idx) => (
-                                <Link
-                                    key={idx}
-                                    href={item.href}
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-start gap-4 p-2 rounded-lg hover:bg-slate-50 group transition-colors"
-                                >
-                                    <item.icon className="w-5 h-5 text-slate-400 group-hover:text-primary mt-1 transition-colors" />
-                                    <div>
-                                        <div className="font-semibold text-slate-800 text-sm group-hover:text-black">{item.label}</div>
-                                        <div className="text-xs text-slate-500 font-medium">{item.sub}</div>
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-4 px-2">Explore</h3>
+                            <div className="space-y-2">
+                                {mainNav.map((item, idx) => (
+                                    <div key={idx} className="space-y-1">
+                                        <Link
+                                            href={item.href}
+                                            onClick={() => setIsOpen(false)}
+                                            className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
+                                        >
+                                            {item.label}
+                                        </Link>
+                                        {item.children?.map((child) => (
+                                            <Link
+                                                key={child.href}
+                                                href={child.href}
+                                                onClick={() => setIsOpen(false)}
+                                                className="block rounded-lg px-6 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                                            >
+                                                {child.label}
+                                            </Link>
+                                        ))}
                                     </div>
-                                </Link>
-                            ))}
+                                ))}
+                            </div>
                         </div>
 
                         <div className="h-px bg-slate-100 w-full" />
 
-                        {/* Discover Section */}
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-4 px-2">Discover</h3>
+                            <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-4 px-2">Quick Actions</h3>
                             <div className="space-y-2">
-                                {sidebarItems.discover.map((item, idx) => (
+                                {actionNav.map((item, idx) => (
                                     <Link
                                         key={idx}
                                         href={item.href}
                                         onClick={() => setIsOpen(false)}
-                                        className="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-50 group transition-colors"
+                                        className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
                                     >
-                                        <item.icon className="w-5 h-5 text-slate-400 group-hover:text-primary transition-colors" />
-                                        <div className="font-semibold text-slate-800 text-sm">{item.label}</div>
+                                        {item.label}
                                     </Link>
                                 ))}
                             </div>

@@ -31,39 +31,55 @@ export async function getAllSermons(): Promise<Sermon[]> {
 }
 
 export async function searchSermons(query: string): Promise<Sermon[]> {
-    const lowerQuery = query.toLowerCase();
-    const all = await prisma.sermon.findMany({
+    const normalizedQuery = query.trim();
+    if (!normalizedQuery) {
+        return getAllSermons();
+    }
+
+    return prisma.sermon.findMany({
+        where: {
+            OR: [
+                { title: { contains: normalizedQuery, mode: 'insensitive' } },
+                { description: { contains: normalizedQuery, mode: 'insensitive' } },
+                { speaker: { contains: normalizedQuery, mode: 'insensitive' } },
+                { series: { contains: normalizedQuery, mode: 'insensitive' } },
+                { topic: { contains: normalizedQuery, mode: 'insensitive' } },
+            ]
+        },
         orderBy: { date: 'desc' }
     });
-    return all.filter((sermon: Sermon) =>
-        sermon.title.toLowerCase().includes(lowerQuery) ||
-        sermon.description.toLowerCase().includes(lowerQuery) ||
-        sermon.speaker.toLowerCase().includes(lowerQuery) ||
-        (sermon.series && sermon.series.toLowerCase().includes(lowerQuery)) ||
-        (sermon.topic && sermon.topic.toLowerCase().includes(lowerQuery))
-    );
 }
 
 export async function getUniqueSeries(): Promise<string[]> {
     const all = await prisma.sermon.findMany({
-        select: { series: true }
+        where: { series: { not: null } },
+        select: { series: true },
+        distinct: ['series'],
+        orderBy: { series: 'asc' }
     });
-    const series = all.map((s: { series: string | null }) => s.series).filter((s): s is string => !!s);
-    return Array.from(new Set(series));
+    return all
+        .map((s: { series: string | null }) => s.series)
+        .filter((s): s is string => Boolean(s));
 }
 
 export async function getUniqueTopics(): Promise<string[]> {
     const all = await prisma.sermon.findMany({
-        select: { topic: true }
+        select: { topic: true },
+        distinct: ['topic'],
+        orderBy: { topic: 'asc' }
     });
-    const topics = all.map((s: { topic: string | null }) => s.topic).filter((s): s is string => !!s);
-    return Array.from(new Set(topics));
+    return all
+        .map((s: { topic: string | null }) => s.topic)
+        .filter((s): s is string => Boolean(s));
 }
 
 export async function getUniqueSpeakers(): Promise<string[]> {
     const all = await prisma.sermon.findMany({
-        select: { speaker: true }
+        select: { speaker: true },
+        distinct: ['speaker'],
+        orderBy: { speaker: 'asc' }
     });
-    const speakers = all.map((s: { speaker: string }) => s.speaker).filter((s): s is string => !!s);
-    return Array.from(new Set(speakers));
+    return all
+        .map((s: { speaker: string }) => s.speaker)
+        .filter((s): s is string => Boolean(s));
 }

@@ -24,11 +24,12 @@ export function PageHero({
 
     return (
         <section className={cn(
-            "text-white py-24 mt-20 relative overflow-hidden",
+            "relative mt-20 overflow-hidden py-24 text-white",
             "bg-gradient-to-r",
             gradients[gradient],
             className
         )}>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.22),_transparent_45%)]" />
             <div className="container relative z-10">
                 <div className="max-w-3xl mx-auto text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white animate-fade-in-up">
@@ -47,8 +48,7 @@ export function PageHero({
                 </div>
             </div>
 
-            {/* Background Pattern Overlay */}
-            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cube-coat.png')] mix-blend-overlay"></div>
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/10 to-transparent" />
         </section>
     );
 }

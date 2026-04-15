@@ -1,12 +1,13 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Sermon } from "@/lib/data/sermons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, PlayCircle, Calendar, User, BookOpen, Clock, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search, PlayCircle, User, BookOpen, ChevronDown } from "lucide-react";
 
 interface SermonListProps {
     allSermons: Sermon[];
@@ -131,7 +132,13 @@ export default function SermonList({
                                     <PlayCircle className="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transition-opacity" />
                                 </div>
                                 {sermon.thumbnail && (
-                                    <img src={sermon.thumbnail} alt={sermon.title} className="absolute inset-0 w-full h-full object-cover" />
+                                    <Image
+                                        src={sermon.thumbnail}
+                                        alt={sermon.title}
+                                        fill
+                                        className="absolute inset-0 object-cover"
+                                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                                    />
                                 )}
                                 <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
                                     {sermon.duration || "45:00"}
@@ -162,8 +169,10 @@ export default function SermonList({
                                     )}
                                 </div>
 
-                                <Button className="w-full mt-6" variant="outline">
-                                    Watch Now
+                                <Button className="w-full mt-6" variant="outline" asChild>
+                                    <Link href={sermon.videoUrl} target="_blank" rel="noreferrer">
+                                        Watch Now
+                                    </Link>
                                 </Button>
                             </CardContent>
                         </Card>
@@ -171,7 +180,7 @@ export default function SermonList({
                 ) : (
                     <div className="col-span-full text-center py-20">
                         <h3 className="text-2xl font-bold text-gray-400 mb-2">No sermons found</h3>
-                        <p className="text-gray-500">Try adjusting your search or filters to find what you're looking for.</p>
+                        <p className="text-gray-500">Try adjusting your search or filters to find what you&apos;re looking for.</p>
                         <Button variant="link" onClick={clearFilters} className="mt-4 text-primary">Clear all filters</Button>
                     </div>
                 )}
